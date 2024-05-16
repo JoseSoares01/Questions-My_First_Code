@@ -1,0 +1,57 @@
+import qrcode
+
+    #REGRA DE CALCULO DO VALOR SEM IVA E COM A TAXA DE IVA
+
+def calcular_iva(preco_sem_iva, taxa_iva):
+    return preco_sem_iva * taxa_iva
+
+    #CONFIGURAÇÕES DO QR_CODE
+
+def gerar_qr_code(dados):
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(dados)
+    qr.make(fit=True)
+    qr_code = qr.make_image(fill_color="black", back_color="white")
+    return qr_code
+
+    #RECOLHE OS DADOS PARA GERAR O CODIGO
+
+def main():
+    nif_vendedor = input("Digite o NIF do vendedor: ")
+    nif_empresa = input("Digite o NIF da empresa: ")
+    pais = input("Digite o país (EU ou PT): ")
+    tipologia = input("Digite a tipologia (FT para fatura, NC para nota de crédito): ")
+    estado = "N"
+    data = input("Digite a data (AAAAMMDD): ")
+    numero_fatura = input("Digite o número da fatura: ")
+    atcud = input("Digite o ATCUD: ")
+    espaco_fiscal = input("Digite o espaço fiscal (EU ou PT): ")
+    
+    # Escolher taxa de IVA
+    taxa_iva = float(input("Digite a taxa de IVA aplicada (em percentagem): ")) / 100
+    
+    # Calcular valor sem IVA
+    valor_inicial = float(input("Digite o valor inicial da fatura (sem IVA): "))
+    
+    # Calcular montante do IVA
+    montante_iva = calcular_iva(valor_inicial, taxa_iva)
+    
+    # Calcular valor total da fatura com IVA
+    total_fatura = valor_inicial + montante_iva
+    
+    # Montar os dados formatados do QR code
+    dados_qr_code = f"A:{nif_vendedor}\nB:{nif_empresa}\nC:{pais}\nD:{tipologia}\nE:{estado}\nF:{data}\nG:{numero_fatura}\nH:{atcud}\nI1:{espaco_fiscal}\nI2:{montante_iva}\nI3:{total_fatura}\nI4:\nI5:\nI6:\nI7:\nI8:\nM:\nN:\nO:\nP:\nQ:\nR:"
+    
+    # Gerar QR code
+    qr_code = gerar_qr_code(dados_qr_code)
+    qr_code.save("fatura_qr_code.png")
+
+    print("QR code gerado com sucesso!")
+
+if __name__ == "__main__":
+    main()
